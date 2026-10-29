@@ -47,4 +47,40 @@ class PresupuestoRepository{
         }
         return new Presupuesto($presupuesto['id_presupuesto'], $presupuesto['id_usuario'], $presupuesto['nombre'], $presupuesto['id_proyecto'], $presupuesto['fecha'], $presupuesto['estado'], $presupuesto['total']);
     }
+
+    public function save(Presupuesto $presupuesto){
+        $stmt = $this->db->prepare("INSERT INTO presupuesto (id_usuario, id_proyecto, fecha) VALUES (?, ?, ?)");
+        $idUsuario = $presupuesto->getIdUsuario();
+        $idProyecto = $presupuesto->getIdProyecto();
+        $fecha = $presupuesto->getFecha();
+        $stmt->bind_param("iis", $idUsuario, $idProyecto, $fecha);
+        $stmt->execute();
+    }
+
+    public function update(Presupuesto $presupuesto){
+        $stmt = $this->db->prepare("UPDATE presupuesto SET id_usuario = ?, id_proyecto = ?, fecha = ? WHERE id_presupuesto = ?");
+        $idUsuario = $presupuesto->getIdUsuario();
+        $idProyecto = $presupuesto->getIdProyecto();
+        $fecha = $presupuesto->getFecha();
+        $id = $presupuesto->getId();
+        $stmt->bind_param("iisi", $idUsuario, $idProyecto, $fecha, $id);
+        $stmt->execute();
+    }
+
+    public function delete($id){
+        $stmt = $this->db->prepare("DELETE FROM presupuesto WHERE id_presupuesto = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+    }
+
+    public function cambiarEstado($id, $estado){
+        $stmt = $this->db->prepare("UPDATE presupuesto SET estado = ? WHERE id_presupuesto = ?");
+        $stmt->bind_param("si", $estado, $id);
+        $stmt->execute();
+    }
+    public function actualizarTotal($id){
+        $stmt = $this->db->prepare("UPDATE presupuesto SET total = (SELECT COALESCE(SUM(cantidad * precio), 0) FROM linea_presupuesto WHERE id_presupuesto = ?) WHERE id_presupuesto = ?");
+        $stmt->bind_param("ii", $id, $id);
+        $stmt->execute();
+    }
 }

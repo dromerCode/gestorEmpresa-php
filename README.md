@@ -1,6 +1,6 @@
 # Gestor de empresa
 
-Gestor de empresa en PHP + MariaDB: usuarios (clientes y empleados), productos, presupuestos y facturas.
+Gestor de empresa en PHP + MariaDB: usuarios (clientes y empleados), productos, proyectos, presupuestos y facturas.
 
 ## Arrancar
 
@@ -31,7 +31,10 @@ db/schema.sql, datos.sql
 usuario 1 ── N presupuesto 1 ── N linea_presupuesto N ── 1 producto
 usuario 1 ── N factura     1 ── N linea_factura     N ── 1 producto
 presupuesto 0..1 ── 1 factura
+usuario 1 ── N proyecto 1 ── 0..1 presupuesto
 ```
+
+Cada proyecto tiene como mucho un presupuesto, y su factura es la de ese presupuesto.
 
 ## Reparto
 
@@ -40,5 +43,6 @@ presupuesto 0..1 ── 1 factura
 | A | Login, registro, roles y productos | `userController.php`, `productoController.php` |
 | B | Presupuestos | `presupuestoController.php` |
 | C | Facturas | `facturaController.php` |
+| D | Proyectos | `proyectoController.php` |
 
 Cada grupo hace su controller y sus modelos, repositorios y vistas. Los ficheros comunes (`index.php`, `db.php`, `mainController.php`, `header.phtml`, `db/`) no se cambian sin avisar.

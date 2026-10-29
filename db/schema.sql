@@ -26,15 +26,30 @@ CREATE TABLE producto (
   PRIMARY KEY (id_producto)
 );
 
+-- Proyectos de un cliente
+CREATE TABLE proyecto (
+  id_proyecto   INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  id_usuario    INT UNSIGNED NOT NULL,
+  nombre        VARCHAR(150) NOT NULL,
+  descripcion   TEXT,
+  fecha_inicio  DATE NOT NULL,
+  estado        ENUM('pendiente', 'en curso', 'terminado') NOT NULL DEFAULT 'pendiente',
+  PRIMARY KEY (id_proyecto),
+  FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+);
+
 -- Presupuestos
 CREATE TABLE presupuesto (
   id_presupuesto  INT UNSIGNED NOT NULL AUTO_INCREMENT,
   id_usuario      INT UNSIGNED NOT NULL,
+  -- UNIQUE: un proyecto solo puede tener un presupuesto
+  id_proyecto     INT UNSIGNED UNIQUE,
   fecha           DATE NOT NULL,
   estado          ENUM('pendiente', 'aceptado', 'rechazado') NOT NULL DEFAULT 'pendiente',
   total           DECIMAL(10,2) NOT NULL DEFAULT 0,
   PRIMARY KEY (id_presupuesto),
-  FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+  FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+  FOREIGN KEY (id_proyecto) REFERENCES proyecto(id_proyecto) ON DELETE SET NULL
 );
 
 -- Lineas de presupuesto

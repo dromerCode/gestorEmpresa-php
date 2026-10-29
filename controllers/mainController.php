@@ -16,5 +16,8 @@ require __DIR__ . '/presupuestoController.php';
 // grupo C: facturas
 require __DIR__ . '/facturaController.php';
 
+// grupo D: proyectos
+require __DIR__ . '/proyectoController.php';
+
 // si ningun controller ha cargado una vista, la de inicio
 require __DIR__ . '/../views/mainView.phtml';

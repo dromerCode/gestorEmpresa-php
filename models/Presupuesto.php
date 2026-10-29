@@ -6,15 +6,17 @@ class Presupuesto{
     // cliente del presupuesto
     private $idUsuario;
     private $nombreUsuario;
+    private $idProyecto;
     private $fecha;
     // pendiente, aceptado o rechazado
     private $estado;
     private $total;
 
-    public function __construct($id, $idUsuario, $nombreUsuario, $fecha, $estado, $total){
+    public function __construct($id, $idUsuario, $nombreUsuario, $idProyecto, $fecha, $estado, $total){
         $this->id = $id;
         $this->idUsuario = $idUsuario;
         $this->nombreUsuario = $nombreUsuario;
+        $this->idProyecto = $idProyecto;
         $this->fecha = $fecha;
         $this->estado = $estado;
         $this->total = $total;
@@ -37,6 +39,12 @@ class Presupuesto{
     }
     public function setNombreUsuario($nombreUsuario){
         $this->nombreUsuario = $nombreUsuario;
+    }
+    public function getIdProyecto(){
+        return $this->idProyecto;
+    }
+    public function setIdProyecto($idProyecto){
+        $this->idProyecto = $idProyecto;
     }
     public function getFecha(){
         return $this->fecha;

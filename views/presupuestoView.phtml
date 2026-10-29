@@ -1,0 +1,77 @@
+<!-- Ver un presupuesto con sus lineas -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto <?= $presupuesto->getId() ?></title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <?php require __DIR__ . '/header.phtml'; ?>
+    <a href="index.php?page=presupuestos">&larr; Volver</a>
+
+    <h2>Presupuesto nº <?= $presupuesto->getId() ?></h2>
+    <p>
+        <strong>Cliente:</strong> <?= htmlspecialchars($presupuesto->getNombreUsuario()) ?><br>
+        <strong>Fecha:</strong> <?= date('d/m/Y', strtotime($presupuesto->getFecha())) ?><br>
+        <!-- de momento el id, cuando el grupo D tenga ProyectoRepository el nombre -->
+        <?php if ($presupuesto->getIdProyecto() != null): ?>
+            <strong>Proyecto:</strong> nº <?= $presupuesto->getIdProyecto() ?><br>
+        <?php endif; ?>
+        <strong>Estado:</strong> <span class="estado <?= $presupuesto->getEstado() ?>"><?= $presupuesto->getEstado() ?></span>
+    </p>
+
+    <?php if ($mensaje): ?>
+        <p class="error"><?= htmlspecialchars($mensaje) ?></p>
+    <?php endif; ?>
+
+    <!-- cambiar estado y borrar (solo empleado) -->
+    <?php if ($usuario->esEmpleado()): ?>
+        <form action="index.php?page=presupuesto&id=<?= $presupuesto->getId() ?>" method="post">
+            <input type="hidden" name="estado_presupuesto" value="<?= $presupuesto->getId() ?>">
+            <label for="estado">Estado:</label>
+            <select name="estado" id="estado">
+                <option value="pendiente" <?php if ($presupuesto->getEstado() == 'pendiente') echo 'selected'; ?>>Pendiente</option>
+                <option value="aceptado" <?php if ($presupuesto->getEstado() == 'aceptado') echo 'selected'; ?>>Aceptado</option>
+                <option value="rechazado" <?php if ($presupuesto->getEstado() == 'rechazado') echo 'selected'; ?>>Rechazado</option>
+            </select>
+            <input type="submit" class="btn" value="Cambiar estado">
+        </form>
+        <form action="index.php" method="post" onsubmit="return confirm('¿Borrar este presupuesto?')">
+            <input type="hidden" name="borrar_presupuesto" value="<?= $presupuesto->getId() ?>">
+            <input type="submit" class="btn rojo" value="Borrar presupuesto">
+        </form>
+    <?php endif; ?>
+
+    <h3>Líneas</h3>
+    <?php if (empty($lineas)): ?>
+        <p>Este presupuesto no tiene líneas.</p>
+    <?php else: ?>
+        <table>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+            <?php foreach ($lineas as $linea): ?>
+                <tr>
+                    <td><?= htmlspecialchars($linea->getNombreProducto()) ?></td>
+                    <td><?= $linea->getCantidad() ?></td>
+                    <td><?= number_format($linea->getPrecio(), 2, ',', '.') ?> €</td>
+                    <td><?= number_format($linea->getCantidad() * $linea->getPrecio(), 2, ',', '.') ?> €</td>
+                    <td>
+                        <!-- aqui va el boton de quitar linea (issue #8) -->
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+
+    <p><strong>Total:</strong> <?= number_format($presupuesto->getTotal(), 2, ',', '.') ?> €</p>
+
+    <!-- aqui va el formulario para añadir lineas (issue #8) -->
+</body>
+</html>

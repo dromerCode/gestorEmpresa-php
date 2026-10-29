@@ -1,0 +1,64 @@
+<!-- Lista de presupuestos -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuestos</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <?php require __DIR__ . '/header.phtml'; ?>
+
+    <?php if ($usuario->esEmpleado()): ?>
+        <h2>Todos los presupuestos</h2>
+    <?php else: ?>
+        <h2>Mis presupuestos</h2>
+    <?php endif; ?>
+
+    <?php if ($mensaje): ?>
+        <p class="error"><?= htmlspecialchars($mensaje) ?></p>
+    <?php endif; ?>
+
+    <?php if (empty($presupuestos)): ?>
+        <p>No hay presupuestos.</p>
+    <?php else: ?>
+        <table>
+            <tr>
+                <th>Nº</th>
+                <!-- el cliente solo ve los suyos, no hace falta la columna -->
+                <?php if ($usuario->esEmpleado()): ?>
+                    <th>Cliente</th>
+                <?php endif; ?>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+            <?php foreach ($presupuestos as $presupuesto): ?>
+                <tr>
+                    <td><?= $presupuesto->getId() ?></td>
+                    <?php if ($usuario->esEmpleado()): ?>
+                        <td><?= htmlspecialchars($presupuesto->getNombreUsuario()) ?></td>
+                    <?php endif; ?>
+                    <td><?= date('d/m/Y', strtotime($presupuesto->getFecha())) ?></td>
+                    <!-- cada estado de un color -->
+                    <td><span class="estado <?= $presupuesto->getEstado() ?>"><?= $presupuesto->getEstado() ?></span></td>
+                    <td><?= number_format($presupuesto->getTotal(), 2, ',', '.') ?> €</td>
+                    <td>
+                        <a href="index.php?page=presupuesto&id=<?= $presupuesto->getId() ?>" class="btn">Ver</a>
+
+                        <!-- el empleado borra -->
+                        <?php if ($usuario->esEmpleado()): ?>
+                            <form action="index.php" method="post" onsubmit="return confirm('¿Borrar este presupuesto?')">
+                                <input type="hidden" name="borrar_presupuesto" value="<?= $presupuesto->getId() ?>">
+                                <input type="submit" class="btn rojo" value="Borrar">
+                            </form>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+</body>
+</html>

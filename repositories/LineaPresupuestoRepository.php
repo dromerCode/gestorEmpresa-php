@@ -13,8 +13,7 @@ class LineaPresupuestoRepository{
         $stmt = $this->db->prepare("SELECT l.id_linea, l.id_presupuesto, l.id_producto, pr.nombre, l.cantidad, l.precio
             FROM linea_presupuesto l JOIN producto pr ON pr.id_producto = l.id_producto
             WHERE l.id_presupuesto = ?");
-        $stmt->bind_param("i", $idPresupuesto);
-        $stmt->execute();
+        $stmt->execute([$idPresupuesto]);
         $lineas = array();
         $resultado = $stmt->get_result();
         while ($fila = $resultado->fetch_assoc()) {
@@ -25,18 +24,11 @@ class LineaPresupuestoRepository{
 
     public function save(LineaPresupuesto $linea){
         $stmt = $this->db->prepare("INSERT INTO linea_presupuesto (id_presupuesto, id_producto, cantidad, precio) VALUES (?, ?, ?, ?)");
-        $idPresupuesto = $linea->getIdPresupuesto();
-        $idProducto = $linea->getIdProducto();
-        $cantidad = $linea->getCantidad();
-        $precio = $linea->getPrecio();
-        $stmt->bind_param("iiid", $idPresupuesto, $idProducto, $cantidad, $precio);
-        $stmt->execute();
+        $stmt->execute([$linea->getIdPresupuesto(), $linea->getIdProducto(), $linea->getCantidad(), $linea->getPrecio()]);
     }
 
-    public function delete($id){
-        $stmt = $this->db->prepare("DELETE FROM linea_presupuesto WHERE id_linea = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
+    public function delete($id, $idPresupuesto){
+        $stmt = $this->db->prepare("DELETE FROM linea_presupuesto WHERE id_linea = ? AND id_presupuesto = ?");
+        $stmt->execute([$id, $idPresupuesto]);
     }
 }
-

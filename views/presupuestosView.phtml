@@ -16,8 +16,24 @@
         <h2>Mis presupuestos</h2>
     <?php endif; ?>
 
+    <?php if ($usuario->esEmpleado()): ?>
+        <form action="index.php" method="post">
+            <label for="id_usuario">Cliente:</label>
+            <select name="id_usuario" id="id_usuario">
+                <?php foreach ($clientes as $cliente): ?>
+                    <option value="<?= $cliente['id_usuario'] ?>">
+                        <?= $cliente['nombre'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <label for="fecha">Fecha:</label>
+            <input type="date" name="fecha" id="fecha">
+            <button type="submit" name="crear_presupuesto">Crear presupuesto</button>
+        </form>
+    <?php endif; ?>
+
     <?php if ($mensaje): ?>
-        <p class="error"><?= htmlspecialchars($mensaje) ?></p>
+        <p class="error"><?= $mensaje ?></p>
     <?php endif; ?>
 
     <?php if (empty($presupuestos)): ?>
@@ -39,7 +55,7 @@
                 <tr>
                     <td><?= $presupuesto->getId() ?></td>
                     <?php if ($usuario->esEmpleado()): ?>
-                        <td><?= htmlspecialchars($presupuesto->getNombreUsuario()) ?></td>
+                        <td><?= $presupuesto->getNombreUsuario() ?></td>
                     <?php endif; ?>
                     <td><?= date('d/m/Y', strtotime($presupuesto->getFecha())) ?></td>
                     <!-- cada estado de un color -->
